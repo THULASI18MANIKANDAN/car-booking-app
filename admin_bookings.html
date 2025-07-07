@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Bookings - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-calendar-check"></i> Manage Bookings</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Car</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Amount</th>
+                    <th>Payment ID</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.username }}</td>
+                    <td>{{ booking.car_name }} ({{ booking.brand }} {{ booking.model }})</td>
+                    <td>{{ booking.start_date }}</td>
+                    <td>{{ booking.end_date }}</td>
+                    <td>₹{{ "%.2f"|format(booking.total_amount) }}</td>
+                    <td>{{ booking.payment_id }}</td>
+                    <td><span class="status status-{{ booking.status }}">{{ booking.status.title() }}</span></td>
+                    <td>{{ booking.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

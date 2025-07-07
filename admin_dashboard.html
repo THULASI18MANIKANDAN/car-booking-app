@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+        <p>Manage your car booking system</p>
+    </div>
+    
+    <div class="admin-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_users }}</h3>
+                <p>Total Users</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-car"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_cars }}</h3>
+                <p>Total Cars</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.total_bookings }}</h3>
+                <p>Total Bookings</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-car-side"></i>
+            </div>
+            <div class="stat-info">
+                <h3>{{ stats.rented_cars }}</h3>
+                <p>Rented Cars</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="admin-nav">
+        <a href="{{ url_for('admin_users') }}" class="admin-nav-item">
+            <i class="fas fa-users"></i>
+            <span>Manage Users</span>
+        </a>
+        <a href="{{ url_for('admin_cars') }}" class="admin-nav-item">
+            <i class="fas fa-car"></i>
+            <span>Manage Cars</span>
+        </a>
+        <a href="{{ url_for('admin_bookings') }}" class="admin-nav-item">
+            <i class="fas fa-calendar-check"></i>
+            <span>Manage Bookings</span>
+        </a>
+        <a href="{{ url_for('add_car') }}" class="admin-nav-item">
+            <i class="fas fa-plus"></i>
+            <span>Add New Car</span>
+        </a>
+        <a href="{{ url_for('admin_analytics') }}" class="admin-nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics & Reports</span>
+        </a>
+        <a href="{{ url_for('admin_maintenance') }}" class="admin-nav-item">
+            <i class="fas fa-wrench"></i>
+            <span>Maintenance Schedule</span>
+        </a>
+        </a>
+        <a href="{{ url_for('chat_support') }}" class="admin-nav-item">
+            <i class="fas fa-comments"></i>
+            <span>Live Support</span>
+        </a>
+    </div>
+    
+    {% if recent_bookings %}
+    <div class="recent-bookings">
+        <h2>Recent Bookings</h2>
+        <div class="table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Car</th>
+                        <th>Dates</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in recent_bookings %}
+                    <tr>
+                        <td>{{ booking.username }}</td>
+                        <td>{{ booking.car_name }}</td>
+                        <td>{{ booking.start_date }} to {{ booking.end_date }}</td>
+                        <td>₹{{ "%.2f"|format(booking.total_amount) }}</td>
+                        <td><span class="status status-{{ booking.status }}">{{ booking.status.title() }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

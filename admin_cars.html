@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Cars - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-car"></i> Manage Cars</h1>
+        <div class="admin-actions">
+            <a href="{{ url_for('add_car') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Car
+            </a>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="cars-admin-grid">
+        {% for car in cars %}
+        <div class="car-admin-card">
+            <div class="car-image">
+                <img src="{{ car.image_url }}" alt="{{ car.name }}">
+                <div class="car-status status-{{ car.status }}">{{ car.status.title() }}</div>
+            </div>
+            <div class="car-info">
+                <h3>{{ car.name }}</h3>
+                <p>{{ car.brand }} {{ car.model }} ({{ car.year }})</p>
+                <div class="car-price">₹{{ "%.2f"|format(car.price_per_day) }}/day</div>
+                <div class="car-actions">
+                    <a href="{{ url_for('edit_car', car_id=car.id) }}" class="btn btn-primary btn-small">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

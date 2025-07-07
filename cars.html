@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Cars - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-car"></i> Available Cars</h1>
+        <p>Choose from our premium collection of vehicles</p>
+    </div>
+</div>
+
+<div class="container">
+    {% if cars %}
+    <div class="cars-grid">
+        {% for car in cars %}
+        <div class="car-card">
+            <div class="car-image">
+                <img src="{{ car.image_url }}" alt="{{ car.name }}">
+                <div class="car-status status-{{ car.status }}">{{ car.status.title() }}</div>
+            </div>
+            <div class="car-info">
+                <h3 class="car-name">{{ car.name }}</h3>
+                <p class="car-details">{{ car.brand }} {{ car.model }} ({{ car.year }})</p>
+                <p class="car-description">{{ car.description }}</p>
+                <div class="car-footer">
+                    <div class="car-price">
+                        <span class="price">₹{{ "%.2f"|format(car.price_per_day) }}</span>
+                        <span class="period">/day</span>
+                    </div>
+                    <a href="{{ url_for('car_detail', car_id=car.id) }}" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-car"></i>
+        <h3>No cars available</h3>
+        <p>Please check back later for available vehicles.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

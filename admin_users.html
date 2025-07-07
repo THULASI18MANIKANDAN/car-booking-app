@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-users"></i> Manage Users</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone or 'Not provided' }}</td>
+                    <td><span class="role role-{{ user.role }}">{{ user.role.title() }}</span></td>
+                    <td>{{ user.created_at }}</td>
+                    <td>
+                        <button class="btn btn-primary btn-small" onclick="sendTestNotification('{{ user.id }}', '{{ user.email }}', '{{ user.phone }}')">
+                            <i class="fas fa-paper-plane"></i> Test Notify
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function sendTestNotification(userId, email, phone) {
+    if (confirm('Send test notification to this user?')) {
+        fetch('/admin/send_test_notification', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                email: email,
+                phone: phone
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Test notification sent successfully!');
+            } else {
+                alert('Failed to send notification: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Error sending notification: ' + error);
+        });
+    }
+}
+</script>
+{% endblock %}
