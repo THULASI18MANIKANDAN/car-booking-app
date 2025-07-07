@@ -155,7 +155,10 @@ car-booking-app/
 6. Complete the simulated payment
 7. View your bookings in "My Bookings"
 8. Cancel bookings if needed
-
+9. User profile management
+10. Booking history and receipts
+11. Email notifications for bookings
+    
 ### For Admins
 1. Login with admin credentials
 2. Access the Admin Dashboard
@@ -218,10 +221,7 @@ car-booking-app/
 Potential improvements for the application:
 
 - Real payment gateway integration
-- Email notifications for bookings
 - Car search and filtering
-- User profile management
-- Booking history and receipts
 - Car reviews and ratings
 - Multi-language support
 - API endpoints for mobile apps
