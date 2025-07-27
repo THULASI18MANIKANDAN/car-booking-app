@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Car Maintenance - Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-wrench"></i> Car Maintenance Schedule</h1>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <div class="maintenance-alerts">
+        {% for car in cars %}
+            {% if car.service_status == 'overdue' %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>{{ car.name }}</strong> is overdue for service! Last service: {{ car.next_service_date }}
+                </div>
+            {% elif car.service_status == 'due_soon' %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock"></i>
+                    <strong>{{ car.name }}</strong> is due for service soon: {{ car.next_service_date }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+    <div class="maintenance-grid">
+        {% for car in cars %}
+        <div class="maintenance-card">
+            <div class="car-image">
+                <img src="{{ car.image_url }}" alt="{{ car.name }}">
+                <div class="service-status status-{{ car.service_status }}">
+                    {% if car.service_status == 'overdue' %}
+                        <i class="fas fa-exclamation-triangle"></i> Overdue
+                    {% elif car.service_status == 'due_soon' %}
+                        <i class="fas fa-clock"></i> Due Soon
+                    {% else %}
+                        <i class="fas fa-check"></i> OK
+                    {% endif %}
+                </div>
+            </div>
+            <div class="car-info">
+                <h3>{{ car.name }}</h3>
+                <p>{{ car.brand }} {{ car.model }} ({{ car.year }})</p>
+                
+                <div class="maintenance-info">
+                    <div class="info-item">
+                        <strong>Last Service:</strong>
+                        <span>{{ car.last_service_date or 'Not recorded' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Next Service:</strong>
+                        <span>{{ car.next_service_date or 'Not scheduled' }}</span>
+                    </div>
+                    {% if car.service_notes %}
+                    <div class="info-item">
+                        <strong>Notes:</strong>
+                        <span>{{ car.service_notes }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <button class="btn btn-primary btn-small" onclick="openMaintenanceModal({{ car.id }}, '{{ car.name }}', '{{ car.last_service_date or '' }}', '{{ car.next_service_date or '' }}', '{{ car.service_notes or '' }}')">
+                    <i class="fas fa-calendar-plus"></i> Schedule Service
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Maintenance Modal -->
+<div id="maintenanceModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-wrench"></i> Schedule Maintenance</h3>
+            <span class="close" onclick="closeMaintenanceModal()">&times;</span>
+        </div>
+        <form id="maintenanceForm" method="POST">
+            <div class="form-group">
+                <label for="last_service_date">Last Service Date</label>
+                <input type="date" id="last_service_date" name="last_service_date">
+            </div>
+            <div class="form-group">
+                <label for="next_service_date">Next Service Date</label>
+                <input type="date" id="next_service_date" name="next_service_date" required>
+            </div>
+            <div class="form-group">
+                <label for="service_notes">Service Notes</label>
+                <textarea id="service_notes" name="service_notes" rows="3" placeholder="Enter any maintenance notes..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Schedule
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeMaintenanceModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openMaintenanceModal(carId, carName, lastService, nextService, notes) {
+    document.getElementById('maintenanceForm').action = `/admin/update_maintenance/${carId}`;
+    document.querySelector('#maintenanceModal h3').innerHTML = `<i class="fas fa-wrench"></i> Schedule Maintenance - ${carName}`;
+    document.getElementById('last_service_date').value = lastService;
+    document.getElementById('next_service_date').value = nextService;
+    document.getElementById('service_notes').value = notes;
+    document.getElementById('maintenanceModal').style.display = 'block';
+}
+
+function closeMaintenanceModal() {
+    document.getElementById('maintenanceModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('maintenanceModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

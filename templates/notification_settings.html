@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Settings - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-bell"></i> Notification Settings</h1>
+        <p>Manage your email and WhatsApp notification preferences</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="settings-container">
+        <div class="settings-card">
+            <div class="settings-header">
+                <h2><i class="fas fa-cog"></i> Communication Preferences</h2>
+                <p>Choose how you'd like to receive booking confirmations and updates</p>
+            </div>
+            
+            <form method="POST" class="settings-form">
+                <div class="form-section">
+                    <h3><i class="fas fa-envelope"></i> Email Notifications</h3>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="email_booking_confirmation" checked>
+                            <span class="checkmark"></span>
+                            Booking confirmations
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="email_booking_reminders" checked>
+                            <span class="checkmark"></span>
+                            Booking reminders (24 hours before pickup)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="email_promotional">
+                            <span class="checkmark"></span>
+                            Promotional offers and discounts
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fab fa-whatsapp"></i> WhatsApp Notifications</h3>
+                    <div class="form-group">
+                        <label for="phone">
+                            <i class="fas fa-phone"></i> WhatsApp Number
+                        </label>
+                        <input type="tel" id="phone" name="phone" 
+                               value="{{ user.phone if user.phone else '' }}"
+                               placeholder="+1234567890" 
+                               pattern="^\+?[1-9]\d{1,14}$">
+                        
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="whatsapp_booking_confirmation" checked>
+                            <span class="checkmark"></span>
+                            Booking confirmations
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="whatsapp_booking_reminders" checked>
+                            <span class="checkmark"></span>
+                            Booking reminders
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="whatsapp_support_updates">
+                            <span class="checkmark"></span>
+                            Support ticket updates
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3><i class="fas fa-clock"></i> Notification Timing</h3>
+                    <div class="form-group">
+                        <label for="reminder_hours">
+                            <i class="fas fa-bell"></i> Send reminders (hours before pickup)
+                        </label>
+                        <select id="reminder_hours" name="reminder_hours">
+                            <option value="24">24 hours</option>
+                            <option value="12">12 hours</option>
+                            <option value="6">6 hours</option>
+                            <option value="2">2 hours</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Preferences
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="testNotifications()">
+                        <i class="fas fa-paper-plane"></i> Test Notifications
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="info-card">
+            <h3><i class="fas fa-info-circle"></i> About Notifications</h3>
+            <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <div>
+                    <h4>Email Notifications</h4>
+                    <p>Receive detailed booking confirmations, invoices, and updates via email.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fab fa-whatsapp"></i>
+                <div>
+                    <h4>WhatsApp Messages</h4>
+                    <p>Get instant notifications on WhatsApp for quick updates and confirmations.</p>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <h4>Privacy & Security</h4>
+                    <p>Your contact information is secure and will only be used for booking-related communications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.settings-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.settings-card, .info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.settings-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.settings-header h2 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h3 {
+    color: #4a5568;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #667eea;
+}
+
+.info-card h3 {
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.info-item i {
+    color: #667eea;
+    font-size: 1.5rem;
+    width: 30px;
+    text-align: center;
+    margin-top: 0.25rem;
+}
+
+.info-item h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2d3748;
+}
+
+.info-item p {
+    margin: 0;
+    color: #718096;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .settings-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function testNotifications() {
+    // Simulate sending test notifications
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        alert('Test notifications sent! Check your email and WhatsApp.');
+    }, 2000);
+}
+</script>
+{% endblock %}

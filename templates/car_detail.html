@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{{ car.name }} - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="car-detail">
+        <div class="car-detail-image">
+            <img src="{{ car.image_url }}" alt="{{ car.name }}">
+            <div class="car-status status-{{ car.status }}">{{ car.status.title() }}</div>
+        </div>
+        <div class="car-detail-info">
+            <h1 class="car-title">{{ car.name }}</h1>
+            <div class="car-specs">
+                <div class="spec-item">
+                    <i class="fas fa-car"></i>
+                    <span>{{ car.brand }} {{ car.model }}</span>
+                </div>
+                <div class="spec-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ car.year }}</span>
+                </div>
+                <div class="spec-item">
+                    <i class="fas fa-rupee-sign"></i>
+                    <span>₹{{ "%.2f"|format(car.price_per_day) }} per day</span>
+                </div>
+            </div>
+            <div class="car-description">
+                <h3>Description</h3>
+                <p>{{ car.description }}</p>
+            </div>
+            <div class="car-actions">
+                {% if car.status == 'available' %}
+                    {% if session.user_id %}
+                        <a href="{{ url_for('book_car', car_id=car.id) }}" class="btn btn-primary btn-large">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-large">
+                            <i class="fas fa-sign-in-alt"></i> Login to Book
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <button class="btn btn-secondary btn-large" disabled>
+                        <i class="fas fa-ban"></i> Not Available
+                    </button>
+                {% endif %}
+                <a href="{{ url_for('cars') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Cars
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

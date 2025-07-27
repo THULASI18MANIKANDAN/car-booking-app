@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Car Booking System{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">Find Your Perfect Ride</h1>
+            <p class="hero-subtitle">Discover amazing cars for your next adventure. Book now and drive away!</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('cars') }}" class="btn btn-primary btn-large">
+                    <i class="fas fa-car"></i> Browse Cars
+                </a>
+                {% if not session.user_id %}
+                <a href="{{ url_for('register') }}" class="btn btn-secondary btn-large">
+                    <i class="fas fa-user-plus"></i> Get Started
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=400&fit=crop" alt="Car Hero Image">
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Why Choose Us?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Booking</h3>
+                <p>Your bookings are protected with advanced security measures and encrypted payments.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Round-the-clock customer support to assist you whenever you need help.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <h3>Premium Fleet</h3>
+                <p>Choose from our wide selection of well-maintained, premium vehicles.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <h3>Best Prices</h3>
+                <p>Competitive pricing with no hidden fees. Get the best value for your money.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if cars %}
+<section class="featured-cars">
+    <div class="container">
+        <h2 class="section-title">Featured Cars</h2>
+        <div class="cars-grid">
+            {% for car in cars %}
+            <div class="car-card">
+                <div class="car-image">
+                    <img src="{{ car.image_url }}" alt="{{ car.name }}">
+                    <div class="car-status status-{{ car.status }}">{{ car.status.title() }}</div>
+                </div>
+                <div class="car-info">
+                    <h3 class="car-name">{{ car.name }}</h3>
+                    <p class="car-details">{{ car.brand }} {{ car.model }} ({{ car.year }})</p>
+                    <p class="car-description">{{ car.description }}</p>
+                    <div class="car-footer">
+                        <div class="car-price">
+                            <span class="price">₹{{ "%.2f"|format(car.price_per_day) }}</span>
+                            <span class="period">/day</span>
+                        </div>
+                        <a href="{{ url_for('car_detail', car_id=car.id) }}" class="btn btn-primary">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <a href="{{ url_for('cars') }}" class="btn btn-secondary btn-large">
+                <i class="fas fa-car"></i> View All Cars
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

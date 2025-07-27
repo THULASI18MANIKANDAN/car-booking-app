@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1><i class="fas fa-chart-bar"></i> Analytics Dashboard</h1>
+        <div class="admin-actions">
+            <a href="{{ url_for('export_bookings', format='excel') }}" class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </a>
+            <a href="{{ url_for('export_bookings', format='pdf') }}" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </a>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+    
+    <div class="analytics-grid">
+        <!-- Bookings Chart -->
+        <div class="chart-card">
+            <h3><i class="fas fa-calendar-check"></i> Bookings Per Month</h3>
+            <canvas id="bookingsChart"></canvas>
+        </div>
+        
+        <!-- Revenue Chart -->
+        <div class="chart-card">
+            <h3><i class="fas fa-rupee-sign"></i> Revenue Analysis</h3>
+            <canvas id="revenueChart"></canvas>
+        </div>
+        
+        <!-- Most Rented Cars -->
+        <div class="chart-card">
+            <h3><i class="fas fa-trophy"></i> Most Rented Cars</h3>
+            <canvas id="mostRentedChart"></canvas>
+        </div>
+        
+        <!-- Car Status Distribution -->
+        <div class="chart-card">
+            <h3><i class="fas fa-car"></i> Car Status Distribution</h3>
+            <canvas id="carStatusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/analytics')
+        .then(response => response.json())
+        .then(data => {
+            // Bookings per month chart
+            const bookingsCtx = document.getElementById('bookingsChart').getContext('2d');
+            new Chart(bookingsCtx, {
+                type: 'line',
+                data: {
+                    labels: data.bookings_per_month.map(item => item.month),
+                    datasets: [{
+                        label: 'Bookings',
+                        data: data.bookings_per_month.map(item => item.bookings),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Revenue chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.revenue_per_month.map(item => item.month),
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: data.revenue_per_month.map(item => item.revenue),
+                        backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                        borderColor: '#28a745',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Most rented cars chart
+            const mostRentedCtx = document.getElementById('mostRentedChart').getContext('2d');
+            new Chart(mostRentedCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.most_rented_cars.map(item => item.car_model),
+                    datasets: [{
+                        data: data.most_rented_cars.map(item => item.count),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Car status distribution chart
+            const carStatusCtx = document.getElementById('carStatusChart').getContext('2d');
+            new Chart(carStatusCtx, {
+                type: 'pie',
+                data: {
+                    labels: data.car_status_distribution.map(item => item.status),
+                    datasets: [{
+                        data: data.car_status_distribution.map(item => item.count),
+                        backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        });
+});
+</script>
+{% endblock %}

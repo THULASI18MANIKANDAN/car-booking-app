@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="payment-container">
+        <div class="payment-header">
+            <h1><i class="fas fa-credit-card"></i> Payment</h1>
+            <p>Complete your booking payment</p>
+        </div>
+        
+        <div class="payment-content">
+            <div class="booking-summary-card">
+                <h3>Booking Summary</h3>
+                <div class="car-info">
+                    <img src="{{ car.image_url }}" alt="{{ car.name }}">
+                    <div>
+                        <h4>{{ car.name }}</h4>
+                        <p>{{ car.brand }} {{ car.model }} ({{ car.year }})</p>
+                    </div>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-item">
+                        <span>Start Date:</span>
+                        <span>{{ booking.start_date }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>End Date:</span>
+                        <span>{{ booking.end_date }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Duration:</span>
+                        <span>{{ booking.days }} day{{ 's' if booking.days > 1 else '' }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Price per day:</span>
+                        <span>₹{{ "%.2f"|format(car.price_per_day) }}</span>
+                    </div>
+                    <div class="detail-item total">
+                        <span>Total Amount:</span>
+                        <span>₹{{ "%.2f"|format(booking.total_amount) }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-form-card">
+                <h3>Payment Details</h3>
+                <div class="payment-method">
+                    <div class="razorpay-simulation">
+                        <div class="razorpay-header">
+                            <img src="https://razorpay.com/assets/razorpay-logo.svg" alt="Razorpay" style="height: 30px;">
+                            <span>Secure Payment</span>
+                        </div>
+                        <div class="payment-info">
+                            <p><i class="fas fa-shield-alt"></i> This is a simulated payment for demonstration purposes</p>
+                            <p><strong>Amount to Pay: ₹{{ "%.2f"|format(booking.total_amount) }}</strong></p>
+                        </div>
+                        <form method="POST" action="{{ url_for('process_payment') }}">
+                            <button type="submit" class="btn btn-success btn-large btn-full">
+                                <i class="fas fa-lock"></i> Pay Now (Simulated)
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="payment-security">
+                    <div class="security-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>256-bit SSL Encryption</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="fas fa-lock"></i>
+                        <span>Secure Payment Gateway</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="fas fa-credit-card"></i>
+                        <span>PCI DSS Compliant</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Live Support - Car Booking System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="fas fa-comments"></i> Live Support</h1>
+        <p>Get instant help from our support team</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="chat-status">
+                <div class="status-indicator online"></div>
+                <div class="status-info">
+                    <h3>Support Team</h3>
+                    <p>Online - Average response time: 2 minutes</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>Hello! Welcome to CarBooking support. How can I help you today?</p>
+                    <span class="message-time">Just now</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="quick-responses">
+                <button class="quick-btn" onclick="sendQuickMessage('I need help with booking')">
+                    Booking Help
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Payment issues')">
+                    Payment Issues
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Cancel booking')">
+                    Cancel Booking
+                </button>
+                <button class="quick-btn" onclick="sendQuickMessage('Technical support')">
+                    Technical Support
+                </button>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()" class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chat Widget (floating) -->
+<div class="chat-widget" id="chatWidget">
+    <div class="chat-widget-header" onclick="toggleChatWidget()">
+        <i class="fas fa-comments"></i>
+        <span>Live Support</span>
+        <div class="notification-badge" id="notificationBadge">1</div>
+    </div>
+    <div class="chat-widget-body" id="chatWidgetBody">
+        <div class="widget-messages" id="widgetMessages">
+            <div class="message bot-message">
+                <div class="message-content">
+                    <p>Hi! Need help? Click here to start chatting.</p>
+                </div>
+            </div>
+        </div>
+        <div class="widget-input">
+            <input type="text" placeholder="Type a message..." onkeypress="handleWidgetKeyPress(event)">
+            <button onclick="sendWidgetMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// WebSocket connection for real-time chat
+let socket;
+let chatWidgetOpen = false;
+
+function initializeChat() {
+    // In a real implementation, you would connect to a WebSocket server
+    // For demo purposes, we'll simulate responses
+    console.log('Chat initialized');
+}
+
+function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    
+    if (message) {
+        addMessage(message, 'user');
+        input.value = '';
+        
+        // Simulate bot response
+        setTimeout(() => {
+            simulateBotResponse(message);
+        }, 1000);
+    }
+}
+
+function sendQuickMessage(message) {
+    addMessage(message, 'user');
+    
+    setTimeout(() => {
+        simulateBotResponse(message);
+    }, 1000);
+}
+
+function addMessage(text, sender) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}-message`;
+    
+    const avatar = sender === 'user' ? 
+        `<div class="message-avatar"><i class="fas fa-user"></i></div>` :
+        `<div class="message-avatar"><i class="fas fa-robot"></i></div>`;
+    
+    messageDiv.innerHTML = `
+        ${avatar}
+        <div class="message-content">
+            <p>${text}</p>
+            <span class="message-time">${new Date().toLocaleTimeString()}</span>
+        </div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function simulateBotResponse(userMessage) {
+    let response = "I understand you need help. Let me connect you with a human agent who can assist you better.";
+    
+    if (userMessage.toLowerCase().includes('booking')) {
+        response = "I can help you with booking issues. Are you trying to make a new booking or modify an existing one?";
+    } else if (userMessage.toLowerCase().includes('payment')) {
+        response = "For payment issues, I can help you check your payment status or process a refund. What specific payment issue are you experiencing?";
+    } else if (userMessage.toLowerCase().includes('cancel')) {
+        response = "I can help you cancel your booking. Please provide your booking ID or the email address used for the booking.";
+    } else if (userMessage.toLowerCase().includes('technical')) {
+        response = "I'm here to help with technical issues. Are you having trouble with the website, mobile app, or something else?";
+    }
+    
+    addMessage(response, 'bot');
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+function toggleChatWidget() {
+    const widget = document.getElementById('chatWidget');
+    const body = document.getElementById('chatWidgetBody');
+    const badge = document.getElementById('notificationBadge');
+    
+    chatWidgetOpen = !chatWidgetOpen;
+    
+    if (chatWidgetOpen) {
+        body.style.display = 'block';
+        widget.classList.add('open');
+        badge.style.display = 'none';
+    } else {
+        body.style.display = 'none';
+        widget.classList.remove('open');
+    }
+}
+
+function sendWidgetMessage() {
+    const input = document.querySelector('.widget-input input');
+    const message = input.value.trim();
+    
+    if (message) {
+        // Add message to widget
+        const messagesContainer = document.getElementById('widgetMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message user-message';
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <p>${message}</p>
+            </div>
+        `;
+        messagesContainer.appendChild(messageDiv);
+        
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        // Simulate response
+        setTimeout(() => {
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'message bot-message';
+            botMessageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>Thanks for your message! A support agent will respond shortly.</p>
+                </div>
+            `;
+            messagesContainer.appendChild(botMessageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 1000);
+    }
+}
+
+function handleWidgetKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendWidgetMessage();
+    }
+}
+
+// Initialize chat when page loads
+document.addEventListener('DOMContentLoaded', initializeChat);
+</script>
+{% endblock %}
